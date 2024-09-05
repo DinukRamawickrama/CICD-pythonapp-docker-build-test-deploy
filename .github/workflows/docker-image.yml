@@ -1,5 +1,6 @@
 name: CI/CD Pipeline
 
+
 on:
   push:
     branches: [ "main" ]
@@ -22,13 +23,13 @@ jobs:
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     
     - name: Build and push Docker image
-      uses: docker/build-push-action@v4
-      with:
-        context: .
-        push: true
-        tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest
       env:
-         IMAGE_NAME: my-image
+        DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+        IMAGE_NAME: my-image
+      run: |
+        docker buildx create --use
+        docker buildx build --push -t $DOCKERHUB_USERNAME/$IMAGE_NAME:latest .
+
     
   test:
     runs-on: ubuntu-latest

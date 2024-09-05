@@ -25,10 +25,10 @@ jobs:
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     - name: Build, tag, and push image to DockerHub
       env:
-        DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-        IMAGE_NAME: my-image
+         DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+         IMAGE_NAME: my-image
       run: |
-         docker buildx build -t IMAGE_NAME ./  
+         docker buildx build -t $DOCKERHUB_USERNAME/$IMAGE_NAME .  # Corrected build command
          docker push $DOCKERHUB_USERNAME/$IMAGE_NAME:latest
 
   

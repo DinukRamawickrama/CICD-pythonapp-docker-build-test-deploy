@@ -14,9 +14,17 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Run tests
+RUN python -m unittest discover tests
+
+# Expose port 5000
 EXPOSE 5000
 
-ENTRYPOINT [ "python" ]
+# Create a non-root user and switch to it
+RUN adduser --disabled-password --gecos '' myuser
+USER myuser
+
+# Set the entrypoint to python
+ENTRYPOINT ["python"]
 
 # Specify the command to run the application
 CMD ["app.py"]

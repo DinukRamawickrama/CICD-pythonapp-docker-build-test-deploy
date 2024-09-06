@@ -21,6 +21,28 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+    - name: Install Docker Buildx
+      run: |
+        docker version
+        docker buildx version
+        docker buildx create --use
+
+    - name: Debug Docker Buildx
+      run: |
+       docker buildx ls
+       docker buildx inspect --bootstrap
+       docker buildx create --use
+
+    - name: Build, tag, and push image to DockerHub
+      env:
+        DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+        IMAGE_NAME: ${{ secrets.IMAGE_NAME }}
+      run: |
+       docker build -t $DOCKERHUB_USERNAME/$IMAGE_NAME:latest .  # Build the image
+       docker push $DOCKERHUB_USERNAME/$IMAGE_NAME:latest  # Push the image to DockerHub
+ 
+
+
     - name: Build, tag, and push image to DockerHub
       env:
         DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -28,7 +50,7 @@ jobs:
       run: |
         docker buildx create --use  # Initialize Docker buildx
         docker buildx inspect --bootstrap  # Ensure Buildx is bootstrapped
-        docker buildx build --platform linux/amd64,linux/arm64 -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.IMAGE_NAME }} . --push  
+        docker buildx build --platform linux/amd64,linux/arm64 -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.IMAGE_NAME }}:latest -f ./ --push  
 
 
 

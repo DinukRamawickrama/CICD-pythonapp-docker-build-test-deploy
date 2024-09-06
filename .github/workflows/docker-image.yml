@@ -23,11 +23,12 @@ jobs:
 
     - name: Build, tag, and push image to DockerHub
       env:
-         DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-         
+       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+       IMAGE_NAME: my-image
       run: |
-        docker buildx create --use     # Initialize Docker buildx
-        docker buildx build --platform linux/amd64,linux/arm64 -t $DOCKERHUB_USERNAME/$IMAGE_NAME:latest . --push  # Multi-arch build and push
+       docker buildx create --use  # Initialize Docker buildx
+       docker buildx build --platform linux/amd64,linux/arm64 -t $DOCKERHUB_USERNAME/$IMAGE_NAME:latest . --push  # Corrected with "."
+
   test:
      runs-on: ubuntu-latest
 

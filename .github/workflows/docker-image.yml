@@ -23,7 +23,28 @@ jobs:
 
     - name: Build, tag, and push image to DockerHub
       env:
-        DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-      run:
-        docker buildx build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.IMAGE_NAME }}
-        #docker push $DOCKERHUB_USERNAME/$IMAGE_NAME:latest
+         DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+         
+      run: |
+        docker buildx create --use     # Initialize Docker buildx
+        docker buildx build --platform linux/amd64,linux/arm64 -t $DOCKERHUB_USERNAME/$IMAGE_NAME:latest . --push  # Multi-arch build and push
+  test:
+     runs-on: ubuntu-latest
+
+     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+         python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+         python -m pip install --upgrade pip
+         pip install -r requirements.txt
+ 
+      - name: Test with pytest
+        run: |
+         pytest -v test.py
